@@ -1,0 +1,110 @@
+{% extends './base.html' %}
+
+{% block title %}Register{% endblock %}
+
+{% block customCSS %}
+<!-- Estilos personalizados para el formulario de registro -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+{% endblock %}
+
+{% block body %}
+<form class="form-signup" action="/register" method="POST">
+    <img class="mb-4" src="{{ url_for('static', filename='img/logo.png') }}" alt="" width="100" height="60">
+    <h1 class="h3 mb-3 fw-normal">Register</h1>
+
+    <!-- Campo de username -->
+    <div class="form-floating">
+        <input type="text" class="form-control" id="username" name="username" placeholder="Username" autocomplete="username" required>
+        <label for="username">Username</label>
+    </div>
+
+    <!-- Campo de fullname -->
+    <div class="form-floating mt-2">
+        <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Full Name" autocomplete="name">
+        <label for="fullname">Full Name</label>
+    </div>
+
+    <!-- Campo de password -->
+    <div class="form-floating mt-2">
+        <input type="password" class="form-control" id="password" name="password" placeholder="Password" autocomplete="new-password" required>
+        <label for="password">Password</label>
+    </div>
+
+    <!-- Confirmar password -->
+    <div class="form-floating mt-2">
+        <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm Password" autocomplete="new-password" required>
+        <label for="confirm_password">Confirm Password</label>
+    </div>
+
+    <button class="w-100 btn btn-lg btn-primary mt-3" type="submit">Register</button>
+</form>
+{% endblock %}
+<!--1
+from models.entities.User import User
+
+class ModelUser:
+    
+    @classmethod
+    def login(self, db, user):
+        try:
+            cursor = db.connection.cursor()
+            sql = """SELECT id, username, password, fullname FROM user 
+                    WHERE username = '{}'""".format(user.username)
+            cursor.execute(sql)
+            row = cursor.fetchone()
+            if row != None:
+                user = User(row[0], row[1], User.check_password(row[2], user.password), row[3])
+                return user
+            else:
+                return None
+        except Exception as ex:
+            raise Exception(ex)
+
+    @classmethod
+    def get_by_id(self, db, id):
+        try:
+            cursor = db.connection.cursor()
+            sql = "SELECT id, username, fullname FROM user WHERE id = {}".format(id)
+            cursor.execute(sql)
+            row = cursor.fetchone()
+            if row != None:
+                return User(row[0], row[1], None, row[2])
+            else:
+                return None
+        except Exception as ex:
+            raise Exception(ex)
+
+    @staticmethod
+    def register(db, user):
+        cursor = db.connection.cursor()
+        try:
+            cursor.execute("INSERT INTO user (username, password, fullname) VALUES (%s, %s, %s)",
+                           (user.username, user.password, user.fullname))
+            db.connection.commit()
+            return True
+        except Exception as e:
+            print(f"Error while registering user: {e}")
+            db.connection.rollback()
+            return False
+        finally:
+            cursor.close()
+
+            from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
+
+class User(UserMixin):
+    
+    def __init__(self, id, username, password, fullname=""):
+        self.id = id
+        self.username = username
+        self.password = generate_password_hash(password, method='pbkdf2:sha256')
+        self.fullname = fullname
+
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
+
+
+#print(generate_password_hash("suscribete"))
+#python .\src\models\entities\User.py
+
+   -->

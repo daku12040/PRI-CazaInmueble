@@ -1,0 +1,7 @@
+pip install datetime
+pip install requests
+pip install flask flask-sqlalchemy
+pip install flask-WTF
+pip install click
+pip install flask-Login
+pip install pycodestyle
