@@ -48,6 +48,7 @@
    
       
         <h3  class="mt-3">Developer Tools</h3>
+        <a id="getpublisher">1</a> <!-- CAMBIAR POR {{ID.USER}} despues del login-->
 	<div class="row">
         <div class="col-md-auto">
 	
@@ -78,13 +79,18 @@
         <div class="form-input">
             <label for="publisher">Publisher</label>
             <input type="text" id="publisher" name="publisher" required>
+
         </div>
         <div class="form-input">
         <label for="ubicacion">Ubicacion</label>
         <input type="text" id="ubicacion" name="ubicacion" readonly>
         <button type="button" id="buscarUbicacion" class="btn btn-primary">*Buscar*</button>
         </div>
-        <!--AGREGAR DESCRIPCION-->
+        <div class="form-input">
+            <label for="opendesc">Descripcion</label>
+            <input type="text" id="opendesc" name="descripcion">
+        </div>
+        
         <button id="publicar" type="submit" class="btn btn-primary thumbnail-creative">Publicar</button>
         
     	</form>
@@ -108,10 +114,30 @@
     	  
     	  <input type="text" id="searchBar" placeholder="Buscar ubicacion..."><button type="button" id="searchButton" class="button-icon">🔍</button>
             <div id="map" style="height: 500px;"></div>
-            <button class="btn btn-primary" id="confirmLocation">Confirmar Ubicación</button>
+            <button class="btn btn-primary" id="confirmLocation">Confirmar Ubicacion</button>
         </div>
-
+    </div>
+        <!-- Modal descripcion-->
+        <div class="modal" id="descripcionModal"  aria-labelledby="descripcionModallabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div id="textdescription" class="modal-content">
+            <div class="modal-header">
+                
+                    <button><span class="close">&times;</span></button>
+                <h5 class="modal-title" id="descripcionModallabel">>>Ingrese Descripcion de la propiedad: </h5>
+                              
+            </div>
+            <div class="modal-body">
+                <textarea class="form-control" id="descripcion" rows="10"></textarea>
+            </div>
+            
+                <button type="button" class="btn btn-primary" id="saveDescription">Guardar</button>
+            
+        </div>
+    </div>
       
+        
+       
     </div>
   </container>
  

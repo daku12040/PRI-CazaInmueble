@@ -1,28 +1,28 @@
-from .entities.User import User
+from .modelsdef import db, User 
+from werkzeug.security import generate_password_hash, check_password_hash
+#from .entities.User import User
 
 class ModelUser:
 
-    @classmethod
-    def login(cls, db, user):
-        try:
-            cursor = db.connection.cursor()
-            sql = """SELECT id, username, password, fullname FROM user 
-                    WHERE username = '{}'""".format(user.username)
-            cursor.execute(sql)
-            row = cursor.fetchone()
-            if row is not None:
-                user_from_db = User(row[0], row[1], row[2], row[3])  # Crear instancia de User con los datos de la base de datos
-                if user_from_db.check_password(user.password):  # Verificar la contraseña
-                    return user_from_db
-                else:
-                    return None
-            else:
-                return None
-        except Exception as ex:
-            raise Exception(ex)
+    __tablename__ = 'user'
+
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), unique=True, nullable=False)
+    password = db.Column(db.String(100), nullable=False)
+    fullname = db.Column(db.String(100), nullable=False)
 
     @classmethod
-    def get_by_id(cls, db, id):
+    def login(cls, username, password):
+        user = User.query.filter_by(username=username).first()
+        if user and check_password_hash(user.password, password):
+            return user
+        return None
+
+    def get_id(self):
+        return str(self.id)
+
+    @classmethod
+    def get_by_id(cls, id):
         try:
             cursor = db.connection.cursor()
             sql = "SELECT id, username, fullname FROM user WHERE id = {}".format(id)
@@ -36,7 +36,7 @@ class ModelUser:
             raise Exception(ex)
 
     @classmethod
-    def get_by_username(cls, db, username):
+    def get_by_username(cls, username):
         try:
             cursor = db.connection.cursor()
             sql = "SELECT id, username, password, fullname FROM user WHERE username = '{}'".format(username)
@@ -49,18 +49,30 @@ class ModelUser:
         except Exception as ex:
             raise Exception(ex)
 
+    @classmethod
+    def create(cls, id=None, username=None, password=None, fullname=""):
+        if id is not None:
+            new_user = cls(id=id, username=username, password=generate_password_hash(password), fullname=fullname)
+        else:
+            new_user = cls(username=username, password=generate_password_hash(password), fullname=fullname)
+        return new_user
+ 	
     @staticmethod
-    def register(db, user):
-        cursor = db.connection.cursor()
+    def register(user):
         try:
-            cursor.execute("INSERT INTO user (username, password, fullname) VALUES (%s, %s, %s)",
-                           (user.username, user.password, user.fullname))
-            db.connection.commit()
+            db.session.add(user)
+            db.session.commit()
             return True
         except Exception as e:
             print(f"Error while registering user: {e}")
-            db.connection.rollback()
+            db.session.rollback()
             return False
-        finally:
-            cursor.close()
+    @staticmethod
+    def get_by_username(username):
+        try:
+            user = User.query.filter_by(username=username).first()
+            return user
+        except Exception as e:
+            print(f"An error occurred while getting the user: {e}")
+            return None
 

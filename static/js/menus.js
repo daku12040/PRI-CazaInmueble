@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const thumbnails = document.getElementById('thumbnails');
     const rutaImagen = document.getElementById('imagen').getAttribute('data-src');
     const filtro1 = document.getElementById('filtro1');
+    const searchButton = document.getElementById('searchButton');
+    const searchInput = document.getElementById('filtronav');
 
     toggleSidebar.addEventListener('click', function (event) {
         event.preventDefault();
@@ -75,6 +77,71 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function redirectToSearch() {
+        const filters = getSelectedFilters();
+        const searchTerm = searchInput.value.trim();
+        const queryParams = new URLSearchParams();
+
+        if (filters.precios.length > 0) {
+            queryParams.append('precios', filters.precios.join(','));
+        }
+        if (filters.tipos.length > 0) {
+            queryParams.append('tipos', filters.tipos.join(','));
+        }
+        if (searchTerm) {
+            queryParams.append('search', searchTerm);
+        }
+
+        window.location.href = `/search?${queryParams.toString()}`;
+    }
+
+    searchButton.addEventListener('click', redirectToSearch);
+
+    searchInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault(); 
+            redirectToSearch();
+        }
+    });
+    function getSelectedFilters() {
+        const precioCheckboxes = document.querySelectorAll('input[type="checkbox"][id^="precio"]');
+        const tipoCheckboxes = document.querySelectorAll('input[type="checkbox"][id^="tipo"]');
+
+        const selectedPrecios = Array.from(precioCheckboxes)
+            .filter(checkbox => checkbox.checked)
+            .map(checkbox => checkbox.value);
+        const selectedTipos = Array.from(tipoCheckboxes)
+            .filter(checkbox => checkbox.checked)
+            .map(checkbox => checkbox.value);
+
+        return {
+            precios: selectedPrecios,
+            tipos: selectedTipos
+        };
+    }
+
+    function filterItems() {
+        const filters = getSelectedFilters();
+        const searchTerm = searchInput.value.trim();
+        const queryParams = new URLSearchParams();
+
+        if (filters.precios.length > 0) {
+            queryParams.append('precios', filters.precios.join(','));
+        }
+        if (filters.tipos.length > 0) {
+            queryParams.append('tipos', filters.tipos.join(','));
+        }
+        if (searchTerm) {
+            queryParams.append('search', searchTerm);
+        }
+
+        fetch(`/preview?${queryParams.toString()}`)
+            .then(response => response.json())
+            .then(data => {
+                crearMiniaturasFiltradas(data);
+            })
+            .catch(error => console.error('Error fetching filtered items:', error));
+    }
     toggleSidebar.addEventListener('click', function (event) {
         event.preventDefault();
         

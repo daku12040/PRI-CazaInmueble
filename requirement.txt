@@ -1,5 +1,6 @@
 pip install datetime
 pip install requests
+pip install pymysql
 pip install flask flask-sqlalchemy
 pip install flask-WTF
 pip install click

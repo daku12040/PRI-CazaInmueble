@@ -4,10 +4,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const locationModal = document.getElementById('locationModal');
     const confirmLocation = document.getElementById('confirmLocation');
     const span = document.getElementsByClassName('close')[0];
+    const spandesc = document.getElementsByClassName('close')[1];
     const ubicacionInput = document.getElementById('ubicacion');
     const publicarButton = document.getElementById('publicar');
     const searchBar = document.getElementById('searchBar');
     const searchButton = document.getElementById('searchButton');
+    const getPublisher = document.getElementById('publisher');
+
+    const opendesc = document.getElementById('opendesc');
+    const descripcionModal = document.getElementById('descripcionModal');
+    const saveDescription = document.getElementById('saveDescription');
+    const textDescription = document.getElementById('textdescription');
     const imageUpload = document.getElementById('imageUpload');
     const gallery = document.getElementById('gallery');
     
@@ -68,13 +75,24 @@ precioInput.addEventListener('mouseout', function() {
 
     span.onclick = function() {
         locationModal.style.display = "none";
+
+    };
+
+    spandesc.onclick = function() {
+     descripcionModal.style.display = "none";
     };
 
     window.onclick = function(event) {
         if (event.target == locationModal) {
             locationModal.style.display = "none";
         }
+        if (event.target == descripcionModal) {
+            descripcionModal.style.display = "none";
+        }
     };
+    const iduser = parseInt(document.getElementById('getpublisher').innerText.trim(), 10);
+    getPublisher.value = iduser ;
+
 
     publicarButton.addEventListener('click', function() {  
     console.log(locationQuery);
@@ -170,7 +188,23 @@ precioInput.addEventListener('mouseout', function() {
             findLocation();
         }
     });
-    document.getElementById("publicacionForm").addEventListener("submit", function(event) {
+
+        opendesc.addEventListener('focus', function() {
+        descripcionModal.style.display = "block";
+        textDescription.style = "width: 150%";
+        
+        
+
+        });
+
+        saveDescription.addEventListener('click', function() {
+            opendesc.style.backgroundColor = "#cbcbcb";
+            descripcionModal.style.display = "none"
+            console.log(descripcion.value);
+        });
+    
+ 
+   document.getElementById("publicacionForm").addEventListener("submit", function(event) {
     event.preventDefault(); 
     
     // Obtener valores del formulario
@@ -179,13 +213,15 @@ precioInput.addEventListener('mouseout', function() {
     const tipo = document.getElementById("tipo").value;
     const publisher = document.getElementById("publisher").value;
     const ubicacion = locationQuery;
+    const descripcion = document.getElementById("descripcion").value; 
     
     const data = {
         nombre: nombre,
         precio: precio,
         tipo: tipo,
         publisher: publisher,
-        ubicacion: ubicacion
+        ubicacion: ubicacion,
+        descripcion: descripcion 
     };
     
     fetch('/insertar', {
@@ -203,6 +239,7 @@ precioInput.addEventListener('mouseout', function() {
         console.error('Error:', error); 
     });
 });
+
 
 
 });

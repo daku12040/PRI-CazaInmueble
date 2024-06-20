@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="generator" content="Hugo 0.122.0">
-    <title>Caza inmuebles</title>
+    <title>Resultados de Busqueda</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/sticky-footer-navbar/">
       <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/cover/">
@@ -15,8 +15,11 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 
-<script src="{{ url_for('static', filename='js/menus.js') }}"></script>
+<script src="{{ url_for('static', filename='js/search.js') }}"></script>
+<script>
+        const publicaciones = {{ publicaciones | tojson | safe }};
 
+ </script>
     
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
@@ -35,8 +38,8 @@
 
   </head>
   <body class="d-flex flex-column h-100">
-    <script src="{{ url_for('static', filename='js/filters.js') }}"></script>
     <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+      <div id="imagen" data-src="{{ url_for('static', filename='images/preview.jpg') }}"></div>
       <symbol id="check2" viewBox="0 0 16 16">
         <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
       </symbol>
@@ -52,37 +55,9 @@
       </symbol>
     </svg>
 
-    <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
-    
-      <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text">
-        <li>
-          <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
-            <svg class="bi me-2 opacity-50" width="1em" height="1em"><use href="#sun-fill"></use></svg>
-            Light
-            <svg class="bi ms-auto d-none" width="1em" height="1em"><use href="#check2"></use></svg>
-          </button>
-        </li>
-        <li>
-          <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false">
-            <svg class="bi me-2 opacity-50" width="1em" height="1em"><use href="#moon-stars-fill"></use></svg>
-            Dark
-            <svg class="bi ms-auto d-none" width="1em" height="1em"><use href="#check2"></use></svg>
-          </button>
-        </li>
-        <li>
-          <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto" aria-pressed="true">
-            <svg class="bi me-2 opacity-50" width="1em" height="1em"><use href="#circle-half"></use></svg>
-            Auto
-            <svg class="bi ms-auto d-none" width="1em" height="1em"><use href="#check2"></use></svg>
-          </button>
-        </li>
-      </ul>
-    </div>
-
-    
 <header>
   <!-- Fixed navbar -->
-  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-custom">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-custom">
     <div class="container-fluid">
         <a class="navbar-brand" href="#principal">
          <img src="{{ url_for('static', filename='images/icon2.png') }}" alt="Icono">
@@ -93,7 +68,7 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav me-auto mb-2 mb-md-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Inicio</a>
+                    <a class="nav-link" aria-current="page" href="{{ url_for('index') }}">Inicio</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('publicar') }}">Publicar</a>
@@ -107,15 +82,12 @@
 </nav>
 
 </header>
-<!--Imagen fondo-->
 
 <main id="principal">
- <div class="position-relative">
-    <img class="img-fluid" src="{{ url_for('static', filename='images/bannermain.jpg') }}" 
- alt="Imagen principal de la página" width="100%" tabindex="1">
-
-    <div class="overlay position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center">
-        <div class="input-group" style="max-width: 700px;"> <!-- Ajustar el ancho del buscador -->
+ <body>
+  <div class="container">
+  <div class="section-overlap justify-content-center align-items-center">
+        <div class="input-group" style="max-width: 1000px;"> 
           <label for="filtronav" style="display: none;">Buscador por filtros</label>
             <input type="text" class="form-control" name="Buscador" id="filtronav" placeholder="Buscar..." aria-describedby="boton-desplegable"title="Busqueda">
             
@@ -194,91 +166,17 @@
 </div>
 
 </main>
-    
-<!-- Begin page content -->
-<container id="inicio">
-<div class="flex-shrink-0">
-    <div class="row">
-      <div id="sidebar" class="col-md-4 sidebar">
-                <nav class="navbar-expand-md flex-md-column align-items-center">
-                    <a id="toggle-sidebar" class="navbar-brand" href="#Menu">Menu <</a>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarMenu">
-                        <ul id="menuItems" class="flex-md-column flex-row navbar-nav w-100 justify-content-between">
-                            <li class="nav-item">
-                        <a id="filtro1" class="nav-menu-link" href="#">Precio</a>
-                        <div class="range-container" id="range-container">
-                        <label for="customRange">$PRECIO$</label>
-                        <input type="range" class="form-range" min="70000000" max="1200000000" step="10000000" value="70000000" id="customRange">
-                        <span id="rangeValue">70000000</span>
 
-                        <button class="btn btn-primary" type="button" id="boton-filtro1" aria-expanded="false">Aplicar</button>
-                          </div>
-                        </li>
-                            <li class="nav-item">
-                                <a class="nav-menu-link" href="#">Mostrar por Tipo</a>
-                                
-                                
-                                <div class="range-container" id="tipo-container">
-                                <div>
-                                    <input type="radio" name="tipoInmueble" value="1" id="tipoApartamento">
-                                    <label for="tipoApartamento">Apartamento</label>
-                                </div>
-                                <div>
-                                    <input type="radio" name="tipoInmueble" value="2" id="tipoCasa">
-                                    <label for="tipoCasa">Casa</label>
-                                </div>
-                                <div>
-                                    <input type="radio" name="tipoInmueble" value="3" id="tipoEdificio">
-                                    <label for="tipoEdificio">Edificio</label>
-                                </div>
-                                <div>
-                                    <input type="radio" name="tipoInmueble" value="4" id="tipoFincaRaiz">
-                                    <label for="tipoFincaRaiz">Finca raiz</label>
-                                </div>
-                                <button class="btn btn-primary" type="button" id="boton-filtro2" aria-expanded="false">Aplicar</button>
-                                </div>
-
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-menu-link" href="#">Buscar por ubicacion</a>
-                                <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" /> 
-                                 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-                                 <!-- Plugin maps -->
-                               
-                                    <div class="range-container" id="map" style="height: 200px; width: 100%;">
-
-                            </div>
-
-                            </li>
-                      
-                            </li>
-                        </ul>
-                    </div>
-                </nav>
-            </div>
-      <div class="col-md-8 content" id="content">
-    <h1 class="mt-5" >Publicaciones recientes</h1>
-    <div class="mx-auto" width=500px>
-      <div id="thumbnails" class="row">
-        <div id="imagen" data-src="{{ url_for('static', filename='images/preview.jpg') }}"></div>
-
-                <!-- Thumbnails filtrados -->
-            </div>
-
-    
-    <p> <a href="http://inmuebles.com" target="_blank">link</a></p>
-  </div>
-
-
-<footer class="sticky-footer mt-auto py-3 bg-body-tertiary">
-        <div class="container">
-            <span class="text-body-secondary">Texto contact</span>
+  <div class="container">
+        <h3>Busqueda :</h3>
+        <div id="thumbnails" class="row">
+            
         </div>
+    </div>
+    <footer id="sticker" class="footer-advanced-aside ">
+      <div>
+        <span>Contacto </span>
+      </div>
     </footer>
-
-
-    </body>
+</body>
 </html>

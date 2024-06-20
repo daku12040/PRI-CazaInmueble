@@ -9,7 +9,7 @@
 
 {% block body %}
 <form class="form-signup" action="/register" method="POST">
-    <img class="mb-4" src="{{ url_for('static', filename='img/logo.png') }}" alt="" width="100" height="60">
+    <img class="mb-4" src="{{ url_for('static', filename='images/logo.png') }}" alt="" width="100" height="60">
     <h1 class="h3 mb-3 fw-normal">Register</h1>
 
     <!-- Campo de username -->
@@ -21,23 +21,47 @@
     <!-- Campo de fullname -->
     <div class="form-floating mt-2">
         <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Full Name" autocomplete="name">
-        <label for="fullname">Full Name</label>
+        <label for="fullname">Nombre - Nombre Inmobiliaria</label>
     </div>
-
+   
     <!-- Campo de password -->
     <div class="form-floating mt-2">
         <input type="password" class="form-control" id="password" name="password" placeholder="Password" autocomplete="new-password" required>
-        <label for="password">Password</label>
+        <label for="password">Contrasena</label>
     </div>
 
     <!-- Confirmar password -->
     <div class="form-floating mt-2">
         <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm Password" autocomplete="new-password" required>
-        <label for="confirm_password">Confirm Password</label>
+        <label for="confirm_password">Confirmar Contrasena</label>
     </div>
 
-    <button class="w-100 btn btn-lg btn-primary mt-3" type="submit">Register</button>
+    <button id="registrar" class="w-100 btn btn-lg btn-primary mt-3" type="submit">Registrarse</button>
 </form>
+ <!--<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    var validar =  document.getElementById('registrar');  
+    var fullname = document.getElementById('fullname').value.trim();
+    
+    var regex = /^([A-Za-z\s-]+) - ([A-Za-z\s-]+)$/;
+    var match = fullname.match(regex);
+
+    validar.addEventListener('submit', function(){
+    if (!match) {
+        alert('Ingrese el nombre de su inmobiliaria! "- Nombre Inmobiliaria".');
+        event.preventDefault();
+    } else {
+        // Obtener el segundo grupo de regex que es el nombrepublisher
+        var nombrepublisher = match[2].trim();
+        var hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'nombrepublisher';
+        hiddenInput.value = nombrepublisher;
+        this.appendChild(hiddenInput);
+    } });
+    });
+</script> -->
+
 {% endblock %}
 <!--1
 from models.entities.User import User
@@ -89,7 +113,7 @@ class ModelUser:
         finally:
             cursor.close()
 
-            from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
 class User(UserMixin):

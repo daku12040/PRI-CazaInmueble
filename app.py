@@ -1,17 +1,24 @@
 from flask import Flask, render_template, jsonify, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import or_
+from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime
-from flask_login import LoginManager, login_user, logout_user, login_required
+from werkzeug.security import check_password_hash, generate_password_hash
+from flask_login import LoginManager, login_user, logout_user, login_required, UserMixin
 
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'a_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/inmueble'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 from models.modelsdef import db,init_db
-from models.models import Tipo, Publisher, Catalogo
+from models.models import Tipo, Publisher, Catalogo, User
 from models.ModelUser import ModelUser
-from models.entities.User import User
+#from models.entities.User import User
+
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 init_db(app)
 
@@ -88,6 +95,53 @@ def preview_inmuebles_ubicacion():
     
     return jsonify(result)
 
+
+
+@app.route('/search', methods=['GET'])
+def search():
+    precios = request.args.get('precios')
+    tipos = request.args.get('tipos')
+    search_term = request.args.get('search')
+
+    query = Catalogo.query
+
+    if precios:
+        precios = precios.split(',')
+        conditions = []
+        for precio in precios:
+            if precio == '100-300':
+                conditions.append(Catalogo.precio.between(100000000, 300000000))
+            elif precio == '300-500':
+                conditions.append(Catalogo.precio.between(300000000, 500000000))
+            elif precio == '500-800':
+                conditions.append(Catalogo.precio.between(500000000, 800000000))
+            elif precio == '800+':
+                conditions.append(Catalogo.precio >= 800000000)
+        query = query.filter(or_(*conditions))
+    
+    if tipos:
+        tipos = tipos.split(',')
+        query = query.filter(Catalogo.tipo_id.in_(tipos))
+
+    if search_term:
+        search_condition = Catalogo.nombre.ilike(f"%{search_term}%") | Catalogo.ubicacion.ilike(f"%{search_term}%")
+        query = query.filter(search_condition)
+
+    publicaciones = query.all()
+
+    result = []
+    for pub in publicaciones:
+        item = {
+            'id': pub.id,
+            'nombre': pub.nombre,
+            'precio': pub.precio,
+            'tipo': pub.tipo_rel.nombretipo,
+            'ubicacion': pub.ubicacion
+        }
+        result.append(item)
+
+    return render_template('search.html', publicaciones=result)
+
 @app.route('/insertar', methods=['POST'])
 def insertar_catalogo():
     nombre = request.json.get('nombre')
@@ -95,9 +149,17 @@ def insertar_catalogo():
     tipo = request.json.get('tipo')
     publisher = request.json.get('publisher')
     ubicacion = request.json.get('ubicacion')
+    descripcion = request.json.get('descripcion') 
     fecha = datetime.now()
 
-    nuevo_elemento = Catalogo(nombre=nombre, precio=precio, tipo=tipo, publisher=publisher, ubicacion=ubicacion, fecha = fecha)
+    nuevo_elemento = Catalogo(
+        nombre=nombre, 
+        precio=precio, 
+        tipo=tipo, 
+        publisher=publisher, 
+        ubicacion=ubicacion, 
+        descripcion=descripcion, 
+        fecha=fecha)
     db.session.add(nuevo_elemento)
     db.session.commit()
 
@@ -128,7 +190,7 @@ login_manager = LoginManager(app)
 
 @login_manager.user_loader
 def load_user(user_id):
-    return ModelUser.get_by_id(db, int(user_id))
+    return User.query.get(int(user_id))
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -137,16 +199,34 @@ def register():
         password = request.form['password']
         fullname = request.form['fullname']
 
-        existing_user = ModelUser.get_by_username(db, username)
+        existing_user = ModelUser.get_by_username(username)
         if existing_user:
             flash("Username already exists. Please choose a different username.")
             return render_template('auth/register.html')
 
         hashed_password = User.generate_password(password)
-        new_user = User(id=0, username=username, password=hashed_password, fullname=fullname)
+        try:
+            new_user = User.create(username=username, password=hashed_password, fullname=fullname)
+            db.session.add(new_user)
+            db.session.commit()
 
-        if ModelUser.register(db, new_user):
-            flash("Registration successful! Please login.")
+            parts = fullname.split(' - ')
+            if len(parts) != 2:
+                flash("Ingrese el nombre de su inmobiliaria! '- Nombre Inmobiliaria'.")
+                return render_template('auth/register.html')
+
+            nombrepublisher = parts[1].strip()
+
+            new_publisher = Publisher.create(nombrepublisher)
+            flash("Usuario created con exito.")
+            return redirect(url_for('login'))  
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash(f"Error: {str(e)}")
+            return render_template('auth/register.html')
+
+        if ModelUser.register(new_user):
+            flash("Registro exitoso, intente login.")
             return redirect(url_for('login'))
         else:
             flash("Registration failed. Please try again later.")
@@ -157,10 +237,13 @@ def register():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        user = User(0, request.form['username'], request.form['password'])
-        logged_user = ModelUser.login(db, user)
-        if logged_user is not None:
-            login_user(logged_user)
+        username = request.form['username']
+        password = request.form['password']
+        print(username,password)
+        user = ModelUser.login(username, password)
+        
+        if user:
+            login_user(user)
             return redirect(url_for('home'))
         else:
             flash("Invalid username or password.")
@@ -189,5 +272,6 @@ def index():
     return render_template('index.html')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port=5000, debug=True)
+    #app.run(debug=True)
 

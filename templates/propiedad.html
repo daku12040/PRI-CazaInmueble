@@ -96,21 +96,12 @@
 	<div id=getprecio class="text-price mt-5" > <!--poner esto en css -->
       	<p> $$$ {{ propiedad.precio | int }} </p>
     	</div>
-	<div id=gettipo class="mt-5" > 
+	<div id=gettipo class="mt-2" > 
       	<h3> {{ propiedad.tipo_rel.nombretipo }} </h3>
     	</div>
         <p>Ubicacion: {{ propiedad.ubicacion }}</p>
-	  <p> EJEMPLO TEXTO <!-- REEMPLAZAR CON DESCRIPCION -->Un tigre que cuando cachorro había sido capturado por humanos fue liberado luego de varios años de vida doméstica. La vida entre los hombres no había menguado sus fuerzas ni sus instintos; en cuanto lo liberaron, corrió a la selva. Ya en la espesura, sus hermanos teniéndolo otra vez entre ellos, le preguntaron:
-
-          -¿Qué has aprendido?
-
-          El tigre meditó sin prisa. Quería transmitirles algún concepto sabio, trascendente. Recordó un comentario humano: "Los tigres no son inmortales. Creen que son inmortales porque ignoran la muerte, ignoran que morirán."
-
-          Ah, pensó el tigre para sus adentros, ese es un pensamiento que los sorprenderá: no somos inmortales, la vida no es eterna. -Aprendí esto- dijo por fin-. No somos inmortales solo ignoramos que alguna vez vamos a....
-
-          Los otros tigres no lo dejaron terminar de hablar, se abalanzaron sobre él, le mordieron el cuello y lo vieron desangrarse hasta morir. Es el problema de los enfermos de muerte -dijo uno de los felinos-. Se tornan resentidos y quieren contagiar a todos.''
-
-          Marcelo Birmajer, El tigre enfermo
+        <h3>Descripcion: </h3>
+	  <p class="" > <!-- REEMPLAZAR CON DESCRIPCION -->{{ propiedad.descripcion }}
         </p>
         <script>
         document.addEventListener('DOMContentLoaded', function() {
