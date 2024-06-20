@@ -4,8 +4,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const thumbnails = document.getElementById('thumbnails');
     const footer = document.getElementById('sticker');
 
-    
-
     const rutaImagen = document.getElementById('imagen').getAttribute('data-src');//modificar con imagen de publicacion
 
 function redirectToSearch() {
@@ -75,7 +73,7 @@ function redirectToSearch() {
     } else {
     publicaciones.forEach(pub => {
         const col = document.createElement('div');
-        col.className = 'col-md-9'; 
+        col.className = 'col-md-12'; 
 
         const card = document.createElement('div');
         card.className = 'd-flex flex-row card-thumbnail'; 
@@ -85,7 +83,8 @@ function redirectToSearch() {
 
         const img = document.createElement('img');
         img.className = 'card-img';
-        img.src = rutaImagen;
+        const imageUrls = pub.image_url ? pub.image_url.split(';') : [];
+        img.src = imageUrls.length > 0 ? `/static/images/${imageUrls[0]}` : '/static/images/preview.jpg';
         img.alt = pub.nombre;
         //img.style.width = '150px'; 
         img.style.height = '200px';

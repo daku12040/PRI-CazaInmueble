@@ -1,0 +1,10 @@
+.btn-register {
+    display: block; /* Hace que el enlace sea de bloque para ocupar todo el ancho */
+    margin-top: 10px; /* Espacio superior */
+    text-decoration: none; /* Quita la subrayado del enlace */
+    color: #007bff; /* Color del enlace */
+  }
+  
+  .btn-register:hover {
+    text-decoration: underline; /* Subrayado al pasar el ratón */
+  }

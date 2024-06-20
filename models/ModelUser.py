@@ -10,6 +10,7 @@ class ModelUser:
     username = db.Column(db.String(20), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
     fullname = db.Column(db.String(100), nullable=False)
+    correo = db.Column(db.String(100), nullable=False)
 
     @classmethod
     def login(cls, username, password):
@@ -50,11 +51,11 @@ class ModelUser:
             raise Exception(ex)
 
     @classmethod
-    def create(cls, id=None, username=None, password=None, fullname=""):
+    def create(cls, username=None, password=None, fullname="", correo=""):
         if id is not None:
-            new_user = cls(id=id, username=username, password=generate_password_hash(password), fullname=fullname)
+            new_user = cls(id=id, username=username, password=generate_password_hash(password), fullname=fullname,correo=correo)
         else:
-            new_user = cls(username=username, password=generate_password_hash(password), fullname=fullname)
+            new_user = cls(username=username, password=generate_password_hash(password), fullname=fullname,correo=correo)
         return new_user
  	
     @staticmethod

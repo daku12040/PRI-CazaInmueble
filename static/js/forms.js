@@ -199,13 +199,20 @@ precioInput.addEventListener('mouseout', function() {
 
         saveDescription.addEventListener('click', function() {
             opendesc.style.backgroundColor = "#cbcbcb";
-            descripcionModal.style.display = "none"
-            console.log(descripcion.value);
+            descripcionModal.style.display = "none";
         });
     
- 
+    //Carga de imagen y prueba de submit
+    
    document.getElementById("publicacionForm").addEventListener("submit", function(event) {
     event.preventDefault(); 
+    const formData = new FormData();
+    const files = imageUpload.files;
+    
+    
+    for (let i = 0; i < files.length; i++) {
+        formData.append('images', files[i]);
+    }
     
     // Obtener valores del formulario
     const nombre = document.getElementById("nombre").value;
@@ -214,22 +221,20 @@ precioInput.addEventListener('mouseout', function() {
     const publisher = document.getElementById("publisher").value;
     const ubicacion = locationQuery;
     const descripcion = document.getElementById("descripcion").value; 
+    const image = document.getElementById("imageUpload").files[0];
+    console.log(image.name);
     
-    const data = {
-        nombre: nombre,
-        precio: precio,
-        tipo: tipo,
-        publisher: publisher,
-        ubicacion: ubicacion,
-        descripcion: descripcion 
-    };
+    formData.append('nombre', nombre);
+    formData.append('precio', precio);
+    formData.append('tipo', tipo);
+    formData.append('publisher', publisher);
+    formData.append('ubicacion', ubicacion);
+    formData.append('descripcion', descripcion);
     
     fetch('/insertar', {
+    
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
+        body: formData
     })
     .then(response => response.json())
     .then(data => {

@@ -4,29 +4,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const menuItems = document.getElementById('menuItems');
     const content = document.getElementById('content');
     const thumbnails = document.getElementById('thumbnails');
-    const rutaImagen = document.getElementById('imagen').getAttribute('data-src');
     const filtro1 = document.getElementById('filtro1');
     const searchButton = document.getElementById('searchButton');
     const searchInput = document.getElementById('filtronav');
-
-    toggleSidebar.addEventListener('click', function (event) {
-        event.preventDefault();
-        
-        if (sidebar.style.width === '80px') {
-            sidebar.style.width = '300px'; 
-            sidebar.style.borderRight = '0px';            
-            toggleSidebar.textContent = 'Menu <';
-            menuItems.style.display = 'block';
-
-        } else {
-            sidebar.style.width = '80px';
-            sidebar.style.borderRight = '2px solid #000'; 
-            toggleSidebar.textContent = '<';
-             menuItems.style.display = 'none';
-        }
-    });
-
-   
 
    function crearMiniaturas(publicaciones) {
         thumbnails.innerHTML = '';  
@@ -39,8 +19,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const img = document.createElement('img');
             img.className = 'card-img-top';
-            img.src = rutaImagen;
+              // cambiar por filename=pub.image_url;
+            const imageUrls = pub.image_url ? pub.image_url.split(';') : [];
+            img.src = imageUrls.length > 0 ? `/static/images/${imageUrls[0]}` : '/static/images/preview.jpg';
+
             img.alt = pub.titulo;
+
+            console.log(img.src);
 
             const cardBody = document.createElement('div');
             cardBody.className = 'card-body';
@@ -148,11 +133,26 @@ document.addEventListener('DOMContentLoaded', function () {
         if (sidebar.classList.contains('collapsed')) {
             sidebar.classList.remove('collapsed');
             content.classList.remove('collapsed');
-            toggleSidebar.textContent = 'Menú';
+            toggleSidebar.textContent = 'Menu';
         } else {
             sidebar.classList.add('collapsed');
             content.classList.add('collapsed');
             toggleSidebar.textContent = '<';
+        }
+    });
+    toggleSidebar.addEventListener('click', function (event) {
+        event.preventDefault();
+        
+        if (sidebar.style.width === '80px') {
+            sidebar.style.width = '300px'; 
+            sidebar.style.borderRight = '0px';            
+            toggleSidebar.textContent = 'Menu <';
+            menuItems.style.display = 'block';
+
+        } else {
+            sidebar.style.width = '80px';
+            toggleSidebar.textContent = '<';
+             menuItems.style.display = 'none';
         }
     });
 

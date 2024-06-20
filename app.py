@@ -1,9 +1,12 @@
+import os
+
 from flask import Flask, render_template, jsonify, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
 from flask_login import LoginManager, login_user, logout_user, login_required, UserMixin
 
 
@@ -11,6 +14,8 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'a_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/inmueble'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['UPLOAD_FOLDER'] = os.path.join('static', 'images')
+
 
 from models.modelsdef import db,init_db
 from models.models import Tipo, Publisher, Catalogo, User
@@ -45,7 +50,10 @@ def get_inmuebles():
             'ubicacion': inmueble.ubicacion,
             'publisher_id': inmueble.publisher,  
             'publisher': inmueble.publisher_rel.nombrepublisher if inmueble.publisher_rel else None,
-            'fecha': inmueble.fecha.strftime('%Y-%m-%d')
+            'fecha': inmueble.fecha.strftime('%Y-%m-%d'),
+            'descripcion': inmueble.descripcion,
+            'image_url': inmueble.image_url
+
         }
         result.append(item)
     return jsonify(result)
@@ -59,6 +67,8 @@ def preview_inmuebles():
         query = query.filter(Catalogo.precio <= precio)
     if tipo:
         query = query.filter(Catalogo.tipo == tipo)
+        if (tipo == 0):
+            query = Catalogo.tipo
 
     inmuebles = query.all()
     result = []
@@ -68,7 +78,8 @@ def preview_inmuebles():
             'precio': inmueble.precio,
             'nombre': inmueble.nombre,
             'tipo': inmueble.tipo_rel.nombretipo,
-            'ubicacion': inmueble.ubicacion
+            'ubicacion': inmueble.ubicacion,
+            'image_url': inmueble.image_url
         }
         result.append(item)
     return jsonify(result)
@@ -86,10 +97,12 @@ def preview_inmuebles_ubicacion():
 
     for inmueble in inmuebles:
         item = {
+            'id': inmueble.id,
             'precio': inmueble.precio,
             'nombre': inmueble.nombre,
             'tipo': inmueble.tipo_rel.nombretipo,
-            'ubicacion': inmueble.ubicacion
+            'ubicacion': inmueble.ubicacion,
+            'image_url': inmueble.image_url
         }
         result.append(item)
     
@@ -121,7 +134,7 @@ def search():
     
     if tipos:
         tipos = tipos.split(',')
-        query = query.filter(Catalogo.tipo_id.in_(tipos))
+        query = query.filter(Catalogo.tipo.in_(tipos))
 
     if search_term:
         search_condition = Catalogo.nombre.ilike(f"%{search_term}%") | Catalogo.ubicacion.ilike(f"%{search_term}%")
@@ -136,7 +149,8 @@ def search():
             'nombre': pub.nombre,
             'precio': pub.precio,
             'tipo': pub.tipo_rel.nombretipo,
-            'ubicacion': pub.ubicacion
+            'ubicacion': pub.ubicacion,
+            'image_url': pub.image_url
         }
         result.append(item)
 
@@ -144,22 +158,38 @@ def search():
 
 @app.route('/insertar', methods=['POST'])
 def insertar_catalogo():
-    nombre = request.json.get('nombre')
-    precio = request.json.get('precio')
-    tipo = request.json.get('tipo')
-    publisher = request.json.get('publisher')
-    ubicacion = request.json.get('ubicacion')
-    descripcion = request.json.get('descripcion') 
+    nombre = request.form.get('nombre')
+    precio = request.form.get('precio')
+    tipo = request.form.get('tipo')
+    publisher = request.form.get('publisher')
+    ubicacion = request.form.get('ubicacion')
+    descripcion = request.form.get('descripcion')
     fecha = datetime.now()
 
+    image_urls = request.json.get('image_urls', [])
+
+    if 'images' in request.files:
+        files = request.files.getlist('images')
+        for file in files:
+            if file:
+                filename = secure_filename(file.filename)
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename) #guardado de prueba, no aplicar  en produccion 
+                file.save(filepath)
+                image_urls.append(filename)
+
+    image_urls_str = ';'.join(image_urls) if image_urls else None
+    print(image_urls_str)
+
     nuevo_elemento = Catalogo(
-        nombre=nombre, 
-        precio=precio, 
-        tipo=tipo, 
-        publisher=publisher, 
-        ubicacion=ubicacion, 
-        descripcion=descripcion, 
-        fecha=fecha)
+        nombre=nombre,
+        precio=precio,
+        tipo=tipo,
+        publisher=publisher,
+        ubicacion=ubicacion,
+        descripcion=descripcion,
+        image_url=image_urls,
+        fecha=fecha
+    )
     db.session.add(nuevo_elemento)
     db.session.commit()
 
@@ -169,7 +199,8 @@ def insertar_catalogo():
 @app.route('/propiedad/<int:id>')
 def mostrar_propiedad(id):
     propiedad = Catalogo.query.get_or_404(id)
-    return render_template('propiedad.html', propiedad=propiedad)
+    image_url = propiedad.image_url
+    return render_template('propiedad.html', propiedad=propiedad, image_url=image_url)
 
 @app.route('/publicar')
 def publicar():
@@ -179,6 +210,23 @@ def publicar():
 def mostrar_publisher(idpublisher):
     publisher = Publisher.query.get_or_404(idpublisher)
     return render_template('publisher.html', publisher=publisher)
+
+@app.route('/cargar_agentes/<int:propiedad_id>')
+def cargar_agentes(propiedad_id):
+
+    catalogo = Catalogo.query.get_or_404(propiedad_id)
+
+    publisher = catalogo.publisher_rel
+    if not publisher:
+        return jsonify([])  
+
+    nombrepublisher = publisher.nombrepublisher
+
+    usuarios = User.query.filter(User.fullname.like(f'%{nombrepublisher}%')).all()
+
+    usuarios_data = [{'fullname': usuario.fullname, 'correo': usuario.correo} for usuario in usuarios]
+
+    return jsonify(usuarios_data)
 
 
 @app.route('/ubicaciones')
@@ -198,6 +246,7 @@ def register():
         username = request.form['username']
         password = request.form['password']
         fullname = request.form['fullname']
+        correo = request.form['correo']
 
         existing_user = ModelUser.get_by_username(username)
         if existing_user:
@@ -206,7 +255,7 @@ def register():
 
         hashed_password = User.generate_password(password)
         try:
-            new_user = User.create(username=username, password=hashed_password, fullname=fullname)
+            new_user = User.create(username=username, password=hashed_password, fullname=fullname,correo=correo)
             db.session.add(new_user)
             db.session.commit()
 
@@ -216,6 +265,16 @@ def register():
                 return render_template('auth/register.html')
 
             nombrepublisher = parts[1].strip()
+
+            existing_publisher = Publisher.query.filter_by(nombrepublisher=nombrepublisher).first()
+
+            if existing_publisher:
+                publisher_id = existing_publisher.idpublisher
+            else:
+                new_publisher = Publisher(nombrepublisher=nombrepublisher)
+                db.session.add(new_publisher)
+                db.session.commit()
+                publisher_id = new_publisher.idpublisher
 
             new_publisher = Publisher.create(nombrepublisher)
             flash("Usuario created con exito.")
@@ -247,9 +306,14 @@ def login():
             return redirect(url_for('home'))
         else:
             flash("Invalid username or password.")
-            return render_template('auth/login.html')
+            return redirect(url_for('publicar'))
     else:
         return render_template('auth/login.html')
+
+
+@app.route('/contacto')
+def contacto():
+    return render_template('contacto.html')
 
 @app.route('/home')
 @login_required
@@ -273,5 +337,5 @@ def index():
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
-    #app.run(debug=True)
+    #app.run(host=0.0.0.0,debug=False)
 

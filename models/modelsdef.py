@@ -43,9 +43,18 @@ class Catalogo(db.Model):
         publisher = db.Column(db.Integer, db.ForeignKey('publishers.idpublisher'))
         fecha = db.Column(db.DateTime, nullable=False)
         descripcion = db.Column(db.String(300), nullable=True) 
+        image_url = db.Column(db.String(255), nullable=True)
 
         tipo_rel = db.relationship('Tipo', back_populates='catalogos')
         publisher_rel = db.relationship('Publisher', back_populates='catalogos')
+
+        @property
+        def image_urls(self):
+            return self.image_url.split(',') if self.image_urls_str else [] #consultar que hace esto
+
+        @image_urls.setter
+        def image_urls(self, urls):
+            self.image_url = ','.join(urls)
 
 class User(db.Model, UserMixin):
     __tablename__ = 'user'
@@ -54,11 +63,13 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(20), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)  
     fullname = db.Column(db.String(100), nullable=False)
+    correo = db.Column(db.String(100), nullable=False)  
+
 
     @classmethod
-    def create(cls, username, password, fullname):
+    def create(cls, username, password, fullname, correo):
         hashed_password = generate_password_hash(password)
-        new_user = cls(username=username, password=hashed_password, fullname=fullname)
+        new_user = cls(username=username, password=hashed_password, fullname=fullname,correo=correo)
         return new_user
 
     def check_password(self, password):

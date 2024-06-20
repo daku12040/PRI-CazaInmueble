@@ -30,7 +30,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const img = document.createElement('img');
             img.className = 'card-img-top';
-            img.src = getImagen;
+            const imageUrls = pub.image_url ? pub.image_url.split(';') : [];
+            img.src = imageUrls.length > 0 ? `/static/images/${imageUrls[0]}` : '/static/images/preview.jpg';
             img.alt = pub.titulo;
             console.log(img.src);
 

@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="generator" content="Hugo 0.122.0">
-    <title>Caza inmuebles</title>
+    <title>Contacto</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/sticky-footer-navbar/">
       <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/cover/">
@@ -27,7 +27,7 @@
     <!-- Custom styles for this template -->
     
         <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-        <script src="{{ url_for('static', filename='js/posts.js') }}"></script>
+
 
 
 
@@ -71,97 +71,62 @@
                     <a class="nav-link" href="{{ url_for('publicar') }}">Publicar</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('contacto') }}">Contacto</a>
+                    <a class="nav-link active" href="#">Contacto</a>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
 </header>
-  <body>
-
- 
-   <p id="urlcharge" geturl="{{ image_url|e }}" class="visually-hidden">{{ image_url|e }}</p>
-    <div class="row">
-      
-        <h1 id= "getnombre" class="mt-5">{{ propiedad.nombre}}</h1>
-    <div class="col-md-6">
-	<div id="propertyCarousel" class="carousel slide" data-bs-interval="false">
-  <div class="carousel-inner">
-  
-    </div>
-  <button class="carousel-control-prev" type="button" data-bs-target="#propertyCarousel" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Previous</span>
-  </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#propertyCarousel" data-bs-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Next</span>
-  </button>
-
-    </div>
-</div>
-    <div id="imageModal" class="modal">
-    
-    <div id="imgcontent" class="modal-content"> 
-    <button class="modal-close button">&times;</button>
-    <img id="modalImage">
-    
-        </div>
-    </div>
-<!-- script para personalizar imgs :D --> 
-
-
-
-      <div class="col-md-6">
-	<div id=getprecio class="text-price mt-5" > 
-      	<p> $$$ {{ propiedad.precio | int }} </p>
-    	</div>
-	<div id=gettipo class="mt-2" > 
-      	<h3> {{ propiedad.tipo_rel.nombretipo }} </h3>
-    	</div>
-        <p>Ubicacion: {{ propiedad.ubicacion }}</p>
-        <h3>Descripcion: </h3>
-	  <p class="" > <!-- REEMPLAZAR CON DESCRIPCION -->{{ propiedad.descripcion }}
-        </p>
-        
-    <div class="col-md-6">
-<container class="container" id="datospublisher">
-        <h3>Publisher:</h3>
-        <div id="linkpublisher" publisherid="{{propiedad.publisher}}" >
-    <h3 class="card-title">{{ propiedad.publisher_rel.nombrepublisher }}</h3>
-  
-        </div>
-        </div>
-</container>
-      <div class="col-md-6">
-    
-    <div class="row">
-        <button class="button" id="buttonagendar" data-bs-toggle="modal" data-bs-target="#agentesModal" data-catalogoid="{{ propiedad_id }}">Agendar</button>
-    </div>
-  </div>
-
-  <div class="modal" id="agentesModal" aria-labelledby="agentesModalLabel" aria-hidden="true">
-          
-            <div class="modal-content">
-              <div class="modal-header">
-                <div class="modal-dialog">
-                <h5 class="modal-title" id="agentesModalLabel">Agentes Disponibles</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              
-              <div class="modal-body">
-                <div id="usuariosPropiedad">
-
-                </div>
-              </div>
-             </div>
-              
-                <button type="button" class="btn btn-primary" id="confirmButton">Confirmar</button>
+<body>
+      <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-12 mt-5 mx-auto">
+                <h1>FORMULARIO DE CONTACTO</h1>
+                <form id="formularioDatosPersonales">
+                    <div class="mt-5">
+                        <h3>Nombre</h3>
+                        <label for="nombre" class="form-label">Nombre:</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="mb-3">
+                        <h3>Apellido</h3>
+                        <label for="apellido" class="form-label">Apellido:</label>
+                        <input type="text" class="form-control" id="apellido" name="apellido" required>
+                    </div>
+                    <div class="mb-3">
+                        <h3>Correo</h3>
+                        <label for="email" class="form-label">Correo:</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <h3>Identificacion</h3>
+                        <label for="userid" class="form-label">Identificacion:</label>
+                        <input type="text" class="form-control" id="userid" name="userid" required>
+                    </div>
+                    <div class="mb-3">
+                        <h3>Telefono</h3>
+                        <label for="telefono" class="form-label">Telefono:</label>
+                        <input type="tel" class="form-control" id="telefono" name="telefono" required>
+                    </div>
+                    <div class="mb-3">
+                        <h3>Ciudad</h3>
+                        <label for="direccion" class="form-label">Ciudad:</label>
+                        <input type="text" class="form-control" id="ciudad" name="direccion" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enviar</button>
+                </form>
             </div>
-            </div>
-          
         </div>
-    
- <!-- meter coso de abajo de color con texto de contacto-->
+    </div>
+
+
+    <script>
+  
+        $('#formularioDatosPersonales').submit(function(event) {
+            event.preventDefault(); 
+            alert('Datos enviados correctamente');
+        });
+    </script>
 </body>
 </html>

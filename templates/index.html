@@ -85,12 +85,12 @@
   <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-custom">
     <div class="container-fluid">
         <a class="navbar-brand" href="#principal">
-         <img src="{{ url_for('static', filename='images/icon2.png') }}" alt="Icono">
+         <img class="box-promo" src="{{ url_for('static', filename='images/icon2.png') }}" alt="Icono">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="navbar" id="navbarCollapse">
             <ul class="navbar-nav me-auto mb-2 mb-md-0">
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="#">Inicio</a>
@@ -99,8 +99,13 @@
                     <a class="nav-link" href="{{ url_for('publicar') }}">Publicar</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="ejemplo2.html">Contacto</a>
+                    <a class="nav-link" href="{{ url_for('contacto') }}">Contacto</a>
                 </li>
+                <form action="/register">
+                <li class="nav-item" >
+                    <button  id="regbutton" class="button" onclick="window.location.href='/register'">Registro</button>
+                </li>
+            </form>
             </ul>
         </div>
     </div>
@@ -115,12 +120,12 @@
  alt="Imagen principal de la página" width="100%" tabindex="1">
 
     <div class="overlay position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center">
-        <div class="input-group" style="max-width: 700px;"> <!-- Ajustar el ancho del buscador -->
+        <div class=" searchbar wow-outer " > 
           <label for="filtronav" style="display: none;">Buscador por filtros</label>
             <input type="text" class="form-control" name="Buscador" id="filtronav" placeholder="Buscar..." aria-describedby="boton-desplegable"title="Busqueda">
             
             
-            <button type="button" id="searchButton" class="">🔍</button>
+            <button  type="button" id="searchButton" class="button-icon">🔍</button>
             <button class="btn btn-primary dropdown-toggle" type="button" id="boton-desplegable" data-bs-toggle="dropdown" aria-expanded="false">Filtrar</button> 
 
             <!-- Lista desplegable -->
@@ -176,6 +181,7 @@
             <label class="form-check-label" for="tipo-4">Finca raiz</label>
         </div>
     </li>
+    
 
                 <!-- Categoría 3 -->
                 <li class="dropdown-header">Recomendacion ℹ️</li>
@@ -211,8 +217,8 @@
                         <a id="filtro1" class="nav-menu-link" href="#">Precio</a>
                         <div class="range-container" id="range-container">
                         <label for="customRange">$PRECIO$</label>
-                        <input type="range" class="form-range" min="70000000" max="1200000000" step="10000000" value="70000000" id="customRange">
-                        <span id="rangeValue">70000000</span>
+                        <input type="range" class="form-range" min="70000000" max="1200000000" step="10000000" value="1000000000" id="customRange">
+                        <span id="rangeValue">1000000000</span>
 
                         <button class="btn btn-primary" type="button" id="boton-filtro1" aria-expanded="false">Aplicar</button>
                           </div>
@@ -238,6 +244,12 @@
                                     <input type="radio" name="tipoInmueble" value="4" id="tipoFincaRaiz">
                                     <label for="tipoFincaRaiz">Finca raiz</label>
                                 </div>
+
+                                    <div>
+                                        <input type="radio" name="tipoInmueble" value="0" id="tipo-todos">
+                                        <label for="tipo-todos">Todos</label>
+                                    </div>
+    
                                 <button class="btn btn-primary" type="button" id="boton-filtro2" aria-expanded="false">Aplicar</button>
                                 </div>
 

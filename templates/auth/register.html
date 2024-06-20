@@ -11,9 +11,11 @@
 <form class="form-signup" action="/register" method="POST">
     <img class="mb-4" src="{{ url_for('static', filename='images/logo.png') }}" alt="" width="100" height="60">
     <h1 class="h3 mb-3 fw-normal">Register</h1>
+            <a href="javascript:history.back()" class="btn-primary btn-lg"><</a>
+
 
     <!-- Campo de username -->
-    <div class="form-floating">
+    <div class="form-floating mt-3">
         <input type="text" class="form-control" id="username" name="username" placeholder="Username" autocomplete="username" required>
         <label for="username">Username</label>
     </div>
@@ -24,11 +26,16 @@
         <label for="fullname">Nombre - Nombre Inmobiliaria</label>
     </div>
    
-    <!-- Campo de password -->
+    <div class="form-floating mt-2">     
+        <input type="email" class="form-control" name="correo" id="correo" placeholder="Email" required>
+        <label for="correo">Correo:</label>
+    </div>    
+
     <div class="form-floating mt-2">
         <input type="password" class="form-control" id="password" name="password" placeholder="Password" autocomplete="new-password" required>
         <label for="password">Contrasena</label>
     </div>
+    
 
     <!-- Confirmar password -->
     <div class="form-floating mt-2">
