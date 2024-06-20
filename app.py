@@ -303,10 +303,10 @@ def login():
         
         if user:
             login_user(user)
-            return redirect(url_for('home'))
+            return redirect(url_for('index'))
         else:
-            flash("Invalid username or password.")
-            return redirect(url_for('publicar'))
+            flash("Nombre y/o contraseña incorrectos")
+            return redirect(url_for('login'))
     else:
         return render_template('auth/login.html')
 
@@ -329,11 +329,12 @@ def protected():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('login'))    
+    return redirect(url_for('index'))    
 
 @app.route('/')
 def index():
     return render_template('index.html')
+#print(generate_password_hash("hola123", method='pbkdf2:sha256'))
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
