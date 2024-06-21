@@ -85,15 +85,16 @@
   <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-custom">
     <div class="container-fluid">
         <a class="navbar-brand" href="#principal">
-         <img class="box-promo" src="{{ url_for('static', filename='images/icon2.png') }}" onclick="window.location.href='/'" alt="Icono">
+    <img class="box-promo" src="{{ url_for('static', filename='images/icon2.png') }}" alt="Icono de Inicio">
         </a>
+        
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="navbar" id="navbarCollapse">
             <ul class="navbar-nav me-auto mb-2 mb-md-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Inicio</a>
+                        <a class="nav-link active" aria-current="page" href="/">Inicio</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('contacto') }}">Contacto</a>
@@ -107,7 +108,7 @@
                     </li>
                     {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="register">Publicar</a>
+                        <a class="nav-link" href="{{ url_for('register') }}" title="Redirect for users">Publicar</a>
                     </li>
                     {% endif %}
                     {% if not current_user.is_authenticated %}
@@ -115,7 +116,7 @@
                         <a class="nav-link" href="{{ url_for('login') }}">Login</a>
                     </li>
                     <li class="nav-item" >
-                        <button  id="regbutton" class="button" onclick="window.location.href='/register'">Registro</button>
+                        <button  class="button" id="regbutton"  onclick="window.location.href='/register'">Registro</button>
                     </li>
                     {% else %}
                     <li class="nav-item">
@@ -130,107 +131,102 @@
 </header>
 <!--Imagen fondo-->
 
-<main id="principal">
+<main>
  <div class="position-relative">
-    <img class="img-fluid" src="{{ url_for('static', filename='images/bannermain.jpg') }}" 
- alt="Imagen principal de la página" width="100%" tabindex="1">
+    <img class="img-fluid" src="{{ url_for('static', filename='images/bannermain.jpg') }}" alt="Imagen principal de la página" width="100%" tabindex="1">
 
     <div class="overlay position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center">
-        <div class=" searchbar input-group" > 
-          <label for="filtronav" class="visually-hidden" >Buscador por filtros</label>
-            <input type="text" class="form-control" name="Buscador" id="filtronav" placeholder="Buscar..." aria-describedby="boton-desplegable"title="Busqueda">
+        <div class="searchbar input-group">
+            <label for="filtronav" class="visually-hidden">Buscador por filtros</label>
+            <input type="text" class="form-control" name="Buscador" id="filtronav" placeholder="Buscar..." aria-describedby="boton-desplegable" title="Busqueda">
             
-            
-            <button  type="button" id="searchButton" class="button-icon">🔍</button>
+            <button type="button" id="searchButton" class="button-icon">🔍</button>
             <button class="btn btn-primary dropdown-toggle" type="button" id="boton-desplegable" data-bs-toggle="dropdown" aria-expanded="false">Filtrar</button> 
 
             <!-- Lista desplegable -->
             <ul class="dropdown-menu dropdown-menu-end">
-                  <li class="dropdown-header">Precios</li>
-                <li>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="100-300" id="precio-1">
-            <label class="form-check-label" for="precio-1">100M-300M</label>
-        </div>
-    </li>
-    <li>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="300-500" id="precio-2">
-            <label class="form-check-label" for="precio-2">300M-500M</label>
-        </div>
-    </li>
-    <li>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="500-800" id="precio-3">
-            <label class="form-check-label" for="precio-3">500M-800M</label>
-        </div>
-    </li>
-    <li>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="800+" id="precio-4">
-            <label class="form-check-label" for="precio-4">800M+</label>
-        </div>
-    </li>
-    <!-- Tipo -->
-    <li class="dropdown-header">Tipo</li>
-    <li>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="1" id="tipo-1">
-            <label class="form-check-label" for="tipo-1">Apartamento</label>
-        </div>
-    </li>
-    <li>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="2" id="tipo-2">
-            <label class="form-check-label" for="tipo-2">Casa</label>
-        </div>
-    </li>
-    <li>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="3" id="tipo-3">
-            <label class="form-check-label" for="tipo-3">Edificio</label>
-        </div>
-    </li>
-    <li>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="4" id="tipo-4">
-            <label class="form-check-label" for="tipo-4">Finca raiz</label>
-        </div>
-    </li>
-    
-
-                <!-- Categoría 3 -->
-                <li class="dropdown-header">Recomendacion ℹ️</li>
+                <li class="dropdown-header">Precios</li>
                 <li>
                     <div class="form-check">
-                        
-                        <p>Utilice palabras clave</p><p> evite ubicaciones especificas</p>
+                        <input class="form-check-input" type="checkbox" value="100-300" id="precio-1">
+                        <label class="form-check-label" for="precio-1">100M-300M</label>
                     </div>
                 </li>
-               
+                <li>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="300-500" id="precio-2">
+                        <label class="form-check-label" for="precio-2">300M-500M</label>
+                    </div>
+                </li>
+                <li>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="500-800" id="precio-3">
+                        <label class="form-check-label" for="precio-3">500M-800M</label>
+                    </div>
+                </li>
+                <li>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="800+" id="precio-4">
+                        <label class="form-check-label" for="precio-4">800M+</label>
+                    </div>
+                </li>
+                <!-- Tipo -->
+                <li class="dropdown-header">Tipo</li>
+                <li>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="1" id="tipo-1">
+                        <label class="form-check-label" for="tipo-1">Apartamento</label>
+                    </div>
+                </li>
+                <li>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="2" id="tipo-2">
+                        <label class="form-check-label" for="tipo-2">Casa</label>
+                    </div>
+                </li>
+                <li>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="3" id="tipo-3">
+                        <label class="form-check-label" for="tipo-3">Edificio</label>
+                    </div>
+                </li>
+                <li>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="4" id="tipo-4">
+                        <label class="form-check-label" for="tipo-4">Finca raíz</label>
+                    </div>
+                </li>
+                <!-- Categoría 3 -->
+                <li class="dropdown-header">Recomendación ℹ️</li>
+                <li>
+                    <div class="dropdown-item-text">
+                        <p>Utilice palabras clave</p>
+                        <p>Evite ubicaciones específicas</p>
+                    </div>
+                </li>
             </ul>
         </div>
     </div>
-</div> </div>
-    </div>
 </div>
-
 </main>
+
     
 <!-- Begin page content -->
-<container id="inicio">
+<div id="principal">
+<container>
 <div class="flex-shrink-0">
     <div class="row">
       <div id="sidebar" class="col-md-4 sidebar">
                 <nav class="navbar-expand-md flex-md-column align-items-center">
-                    <a id="toggle-sidebar" class="navbar-brand" href="#Menu">Menu <</a>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
+                    <a id="toggle-sidebar" class="navbar-brand" href="#Menu">Menu</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation menu">
+                    <span class="navbar-toggler-icon"></span>
                     </button>
+
                     <div class="collapse navbar-collapse" id="navbarMenu">
                         <ul id="menuItems" class="flex-md-column flex-row navbar-nav w-100 justify-content-between">
                             <li class="nav-item">
-                        <a id="filtro1" class="nav-menu-link" href="#">Precio</a>
+                        <a id="filtro1" class="nav-menu-link" >Precio</a>
                         <div class="range-container" id="range-container">
                         <label for="customRange">$PRECIO$</label>
                         <input type="range" class="form-range" min="70000000" max="1200000000" step="10000000" value="1000000000" id="customRange">
@@ -240,7 +236,7 @@
                           </div>
                         </li>
                             <li class="nav-item">
-                                <a class="nav-menu-link" href="#">Mostrar por Tipo</a>
+                                <a class="nav-menu-link" >Mostrar por Tipo</a>
                                 
                                 
                                 <div class="range-container" id="tipo-container">
@@ -271,7 +267,7 @@
 
                             </li>
                             <li class="nav-item">
-                                <a class="nav-menu-link" href="#">Buscar por ubicacion</a>
+                                <p class="nav-menu-link" >Buscar por ubicacion</p>
                                 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" /> 
                                  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
                                  <!-- Plugin maps -->
@@ -291,18 +287,20 @@
     <h1 class="mt-5" >Publicaciones recientes</h1>
     <div class="mx-auto" width=500px>
       <div id="thumbnails" class="row">
-        <div id="imagen" data-src="{{ url_for('static', filename='images/preview.jpg') }}"></div>
+        <img id="imagen" data-src="{{ url_for('static', filename='images/preview.jpg') }}" alt="Imagen no Cargada">
 
                 <!-- Thumbnails filtrados -->
             </div>
 
     
-    <p> <a href="http://inmuebles.com" target="_blank">link</a></p>
+    
   </div>
-
+</div>
+</div>
 
 <footer class="sticky-footer mt-auto py-3 bg-body-tertiary">
         <div class="container">
+            <a href="#principal">Volver hacia arriba </a>
             <span class="text-body-secondary">Texto contact</span>
         </div>
     </footer>
