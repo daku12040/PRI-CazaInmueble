@@ -1,5 +1,5 @@
+# Grupo 5 INMUEBLE - CAZAIMUEBLES - David Naranjo, Jimmy Erazo, Daniel Kure
 import os
-
 from flask import Flask, render_template, jsonify, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
@@ -7,7 +7,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
-from flask_login import LoginManager, login_user, logout_user, login_required, UserMixin
+from flask_login import LoginManager, login_user, logout_user, login_required, UserMixin, current_user
 
 
 app = Flask(__name__)
@@ -212,22 +212,23 @@ def mostrar_publisher(idpublisher):
     publisher = Publisher.query.get_or_404(idpublisher)
     return render_template('publisher.html', publisher=publisher)
 
+@app.route('/cargar_agentes', defaults={'propiedad_id': None})
 @app.route('/cargar_agentes/<int:propiedad_id>')
 def cargar_agentes(propiedad_id):
+    if propiedad_id is None:
+        usuarios = User.query.filter(User.id != 1).all()
+    else:
+        catalogo = Catalogo.query.get_or_404(propiedad_id)
+        publisher = catalogo.publisher_rel
+        if not publisher:
+            return jsonify([])
 
-    catalogo = Catalogo.query.get_or_404(propiedad_id)
+        nombrepublisher = publisher.nombrepublisher
+        usuarios = User.query.filter(User.fullname.like(f'%{nombrepublisher}%')).all()
 
-    publisher = catalogo.publisher_rel
-    if not publisher:
-        return jsonify([])  
-
-    nombrepublisher = publisher.nombrepublisher
-
-    usuarios = User.query.filter(User.fullname.like(f'%{nombrepublisher}%')).all()
-
-    usuarios_data = [{'username': usuario.username, 'correo': usuario.correo} for usuario in usuarios]
-
+    usuarios_data = [{'username': usuario.username, 'correo': usuario.correo, 'fullname': usuario.fullname} for usuario in usuarios]
     return jsonify(usuarios_data)
+
 
 @app.route('/solicitudes/<nombre_agente>', methods=['GET'])
 @login_required
@@ -237,6 +238,23 @@ def obtener_solicitudes(nombre_agente):
     else:
         solicitudes = Solicitudes.query.filter(Solicitudes.nombre_agente == nombre_agente).all()
     return render_template('solicitudes.html', solicitudes=solicitudes, nombre_agente=nombre_agente)
+
+@app.route('/get_solicitudes', defaults={'solicitud_id': None})
+@app.route('/get_solicitudes/<int:solicitud_id>')
+def get_solicitudes(solicitud_id):
+    if solicitud_id is None:
+        solicitudes = Solicitudes.query.all()
+        solicitudes_data = [{'id': solicitud.id, 'nombre_cliente': solicitud.nombre_cliente, 'propiedad': solicitud.propiedad, 'tel_cliente': solicitud.tel_cliente} for solicitud in solicitudes]
+        return jsonify(solicitudes_data)
+    else:
+        solicitud = Solicitudes.query.get_or_404(solicitud_id)
+        solicitud_data = {
+            'id': solicitud.id,
+            'nombre_cliente': solicitud.nombre_cliente,
+            'propiedad': solicitud.propiedad,
+            'tel_cliente': solicitud.tel_cliente
+        }
+        return jsonify(solicitud_data)
 
 
 @app.route('/insertar_solicitud', methods=['POST'])
@@ -254,6 +272,20 @@ def insertar_solicitud():
         return jsonify({'message': 'Solicitud insertada correctamente'}), 201
     else:
         return jsonify({'error': 'Datos Invalidos'}), 405
+
+@app.route('/get_publisher_id')
+@login_required
+def get_publisher_id():
+    if current_user.is_authenticated:
+        fullname = current_user.fullname
+        parts = fullname.split(' - ')
+        if len(parts) == 2:
+            nombrepublisher = parts[1]
+            publisher = Publisher.query.filter(Publisher.nombrepublisher.like(f'%{nombrepublisher}%')).first()
+            if publisher:
+                return jsonify({'publisher_id': publisher.idpublisher})
+    return jsonify({'publisher_id': None})
+
 
 @app.route('/borrar_propiedad/<int:propiedad_id>', methods=['DELETE'])
 def borrar_propiedad(propiedad_id):
@@ -378,5 +410,5 @@ def index():
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
-    #app.run(host=0.0.0.0,debug=False)
+    #app.run(host="0.0.0.0",debug=False)
 

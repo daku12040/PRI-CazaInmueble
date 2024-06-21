@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const precioInput = document.getElementById('precio');
     const buscarUbicacion = document.getElementById('buscarUbicacion');
     const locationModal = document.getElementById('locationModal');
@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const publicarButton = document.getElementById('publicar');
     const searchBar = document.getElementById('searchBar');
     const searchButton = document.getElementById('searchButton');
-    const getPublisher = document.getElementById('publisher');
     const formData = new FormData();
 
     const opendesc = document.getElementById('opendesc');
@@ -23,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let selectedLocation = null;
     let searchMap; 
     let locationQuery;
-
+    let col;
 
     $('[data-toggle="tooltip"]').tooltip();
     precioInput.addEventListener('input', function() {
@@ -91,8 +90,8 @@ precioInput.addEventListener('mouseout', function() {
             descripcionModal.style.display = "none";
         }
     };
-    const iduser = parseInt(document.getElementById('getpublisher').innerText.trim(), 10);
-    getPublisher.value = iduser ;
+    
+        
 
 
     publicarButton.addEventListener('click', function() {  
@@ -166,7 +165,7 @@ precioInput.addEventListener('mouseout', function() {
         formData.append('images',files[i].name);
         console.log('images', files[i].name);
     }
-            const col = document.createElement('div');
+            col = document.createElement('div');
             col.classList.add('col-sm-6'); 
         Array.from(files).forEach(file => {
           const reader = new FileReader();
@@ -232,9 +231,7 @@ precioInput.addEventListener('mouseout', function() {
     formData.append('ubicacion', ubicacion);
     formData.append('descripcion', descripcion);
 
-    
 
-    
     fetch('/insertar', {
     
         method: 'POST',
@@ -242,13 +239,40 @@ precioInput.addEventListener('mouseout', function() {
     })
     .then(response => response.json())
     .then(data => {
-        console.log(data); 
+        alert('Publicacion Guardada con exito');
+        window.location.reload();
     })
     .catch(error => {
         console.error('Error:', error); 
     });
+        
 });
 
+//Funcion para lockear Publisher
+$(document).ready(function() {
+            $.ajax({
+                url: '/get_publisher_id',
+                method: 'GET',
+                success: function(response) {
+                    if (response.publisher_id) {
+                        $('#getpublisher').text(response.publisher_id);
+                        $('#getpublisher').attr('href', `/publisher/${response.publisher_id}`);
+                        const getPublisher = document.getElementById('getpublisher');
+                        const getPublisherId = getPublisher.getAttribute('href');
+                        const publisher = document.getElementById("publisher");
+                        publisher.value = response.publisher_id
+                            console.log(response.publisher_id);
+                        
+                    } else {
+                        $('#getpublisher').text('Admin');
+
+                    }
+                },
+                error: function() {
+                    $('#getpublisher').text('Error al obtener Publisher ID');
+                }
+            });
+        });
 
 
 });

@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const agentesModal = new bootstrap.Modal(document.getElementById('agentesModal'));
   const volverButton = document.querySelector('.button.btn-secondary');
   const deleteButton = document.getElementById('buttondelete');
-  const getdelete = deleteButton.getAttribute('deleteid');
+ 
 
   const modalClose = document.getElementsByClassName("modal-close button")[0];  
 
@@ -116,8 +116,10 @@ document.addEventListener('DOMContentLoaded', function () {
         
           
     
-
+    if(deleteButton){
     deleteButton.addEventListener('click', function() {
+         
+        const getdelete = deleteButton.getAttribute('deleteid');
         const propiedadNombre = confirm.getAttribute('data-propiedad'); 
            const propiedadId = getdelete;
 
@@ -165,7 +167,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 });
             });
-
+        }
     modalClose.onclick = function () {
         modal.style.display = "none";
     }

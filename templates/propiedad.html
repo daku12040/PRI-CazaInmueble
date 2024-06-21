@@ -154,11 +154,11 @@
         <button class="button" id="buttonagendar" data-bs-toggle="modal" data-bs-target="#agentesModal" data-catalogoid="{{ propiedad.id }}">Agendar</button>
         </div>
         <div class="col-md-4">
-        <button class="button" id="buttonmore" onclick="window.location.href='/search?tipos={{propiedad.tipo}}'" >Ver mas {{ propiedad.tipo_rel.nombretipo }}s</button>
+        <button class="button" id="buttonmore" onclick="window.location.href='/search?tipos={{ propiedad.tipo }}'" >Ver mas {{ propiedad.tipo_rel.nombretipo }}s</button>
         </div>
         {% if current_user.username == 'Admin' %}
         <div class="col-md-6">
-        <button class="button button-lg" id="buttondelete" deleteid="{{propiedad.id}}" >Borrar</button>
+        <button class="button button-lg" id="buttondelete" deleteid="{{ propiedad.id }}" >Borrar</button>
         </div>
         {% endif %}
   </div>

@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function () {
         event.preventDefault();
         
         if (sidebar.style.width === '80px') {
-            sidebar.style.width = '300px'; 
+            sidebar.style.width = '33.33%'; 
             sidebar.style.borderRight = '0px';            
             toggleSidebar.textContent = 'Menu <';
             menuItems.style.display = 'block';
