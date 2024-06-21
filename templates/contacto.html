@@ -63,16 +63,34 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav me-auto mb-2 mb-md-0">
+            <ul class="navbar-nav me-auto mb-2 ">
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{{ url_for('index') }}">Inicio</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('publicar') }}">Publicar</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="#">Contacto</a>
-                </li>
+                        <a class="nav-link active" aria-current="page" href="{{ url_for('index') }}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Contacto</a>
+                    </li>
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('publicar') }}">Publicar</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="register">Publicar</a>
+                    </li>
+                    {% endif %}
+                    {% if not current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                    </li>
+                    <li class="nav-item" >
+                        <button  id="regbutton" class="button" onclick="window.location.href='/register'">Registro</button>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <button class="button" onclick="window.href='/logout'">Cerrar Sesion</button>
+                    </li>
+                    {% endif %}
             </ul>
         </div>
     </div>
@@ -89,32 +107,23 @@
                         <label for="nombre" class="form-label">Nombre:</label>
                         <input type="text" class="form-control" id="nombre" name="nombre" required>
                     </div>
-                    <div class="mb-3">
-                        <h3>Apellido</h3>
-                        <label for="apellido" class="form-label">Apellido:</label>
-                        <input type="text" class="form-control" id="apellido" name="apellido" required>
-                    </div>
-                    <div class="mb-3">
-                        <h3>Correo</h3>
-                        <label for="email" class="form-label">Correo:</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
-                    </div>
-                    <div class="mb-3">
-                        <h3>Identificacion</h3>
-                        <label for="userid" class="form-label">Identificacion:</label>
-                        <input type="text" class="form-control" id="userid" name="userid" required>
-                    </div>
+          
+  
                     <div class="mb-3">
                         <h3>Telefono</h3>
                         <label for="telefono" class="form-label">Telefono:</label>
                         <input type="tel" class="form-control" id="telefono" name="telefono" required>
                     </div>
-                    <div class="mb-3">
-                        <h3>Ciudad</h3>
-                        <label for="direccion" class="form-label">Ciudad:</label>
-                        <input type="text" class="form-control" id="ciudad" name="direccion" required>
+                    <div class="visually-hidden">
+                        <label for="nombre_agente" class="form-label">Admin</label>
+                        <input type="text" class="form-control" id="nombre_agente" value="Admin" name="admin" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Enviar</button>
+                    <div class="mb-3">
+                        <h3>Interes</h3>
+                        <label for="propiedad" class="form-label">Interes:</label>
+                        <input type="text" class="form-control" id="propiedad" placeholder="Tipo de propiedad/Inmobiliaria" name="propiedad" required>
+                    </div>
+                    <button type="submit" id="enviar" class="btn btn-primary">Enviar</button>
                 </form>
             </div>
         </div>
@@ -122,11 +131,49 @@
 
 
     <script>
-  
-        $('#formularioDatosPersonales').submit(function(event) {
-            event.preventDefault(); 
-            alert('Datos enviados correctamente');
+        document.addEventListener('DOMContentLoaded', function () {
+
+        const confirm = document.getElementById('enviar');
+            
+        confirm.addEventListener('click',function(){
+        event.preventDefault();
+        const selectedAgent = document.getElementById('nombre_agente'); 
+        if (selectedAgent.value) {
+            const nombreCliente = document.getElementById('nombre').value;
+            const telefonoCliente = document.getElementById('telefono').value;
+            const propiedadNombre = document.getElementById('propiedad').value;
+            const selectedUsername = selectedAgent.value;
+
+            
+            const data = {
+                nombreagente: selectedUsername,
+                propiedad: propiedadNombre,
+                nombrecliente: nombreCliente,
+                telcliente: telefonoCliente
+            };
+
+            
+            fetch('/insertar_solicitud', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Solicitud enviada'); 
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+         else{
+            alert('Llene todos los datos')
+        }
+    
         });
+    });
     </script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, jsonify, request, redirect, url_for, flash
+from flask import Flask, render_template, jsonify, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
 from sqlalchemy.exc import SQLAlchemyError
@@ -18,7 +18,7 @@ app.config['UPLOAD_FOLDER'] = os.path.join('static', 'images')
 
 
 from models.modelsdef import db,init_db
-from models.models import Tipo, Publisher, Catalogo, User
+from models.models import Tipo, Publisher, Catalogo, User, Solicitudes
 from models.ModelUser import ModelUser
 #from models.entities.User import User
 
@@ -166,18 +166,18 @@ def insertar_catalogo():
     descripcion = request.form.get('descripcion')
     fecha = datetime.now()
 
-    image_urls = request.json.get('image_urls', [])
+    imagesurl = []
 
-    if 'images' in request.files:
-        files = request.files.getlist('images')
+    if 'imagesurl' in request.files:
+        files = request.files.getlist('imagesurl')
         for file in files:
             if file:
                 filename = secure_filename(file.filename)
                 filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename) #guardado de prueba, no aplicar  en produccion 
                 file.save(filepath)
-                image_urls.append(filename)
+                imagesurl.append(filename)
 
-    image_urls_str = ';'.join(image_urls) if image_urls else None
+    image_urls_str = ';'.join(imagesurl)
     print(image_urls_str)
 
     nuevo_elemento = Catalogo(
@@ -187,7 +187,7 @@ def insertar_catalogo():
         publisher=publisher,
         ubicacion=ubicacion,
         descripcion=descripcion,
-        image_url=image_urls,
+        image_url=image_urls_str,
         fecha=fecha
     )
     db.session.add(nuevo_elemento)
@@ -203,6 +203,7 @@ def mostrar_propiedad(id):
     return render_template('propiedad.html', propiedad=propiedad, image_url=image_url)
 
 @app.route('/publicar')
+@login_required
 def publicar():
     return render_template('publicar.html')
 
@@ -224,9 +225,47 @@ def cargar_agentes(propiedad_id):
 
     usuarios = User.query.filter(User.fullname.like(f'%{nombrepublisher}%')).all()
 
-    usuarios_data = [{'fullname': usuario.fullname, 'correo': usuario.correo} for usuario in usuarios]
+    usuarios_data = [{'username': usuario.username, 'correo': usuario.correo} for usuario in usuarios]
 
     return jsonify(usuarios_data)
+
+@app.route('/solicitudes/<nombre_agente>', methods=['GET'])
+@login_required
+def obtener_solicitudes(nombre_agente):
+    if nombre_agente == "Admin":
+        solicitudes = Solicitudes.query.all()
+    else:
+        solicitudes = Solicitudes.query.filter(Solicitudes.nombre_agente == nombre_agente).all()
+    return render_template('solicitudes.html', solicitudes=solicitudes, nombre_agente=nombre_agente)
+
+
+@app.route('/insertar_solicitud', methods=['POST'])
+def insertar_solicitud():
+    if request.method == 'POST':
+        nombre_agente = request.json.get('nombreagente')
+        propiedad = request.json.get('propiedad')
+        nombre_cliente = request.json.get('nombrecliente')
+        tel_cliente = request.json.get('telcliente')
+
+        nueva_solicitud = Solicitudes(nombre_agente=nombre_agente, propiedad=propiedad, nombre_cliente=nombre_cliente, tel_cliente=tel_cliente)
+        db.session.add(nueva_solicitud)
+        db.session.commit()
+
+        return jsonify({'message': 'Solicitud insertada correctamente'}), 201
+    else:
+        return jsonify({'error': 'Datos Invalidos'}), 405
+
+@app.route('/borrar_propiedad/<int:propiedad_id>', methods=['DELETE'])
+def borrar_propiedad(propiedad_id):
+    propiedad = Catalogo.query.get_or_404(propiedad_id)
+    
+    try:
+        db.session.delete(propiedad)
+        db.session.commit()
+        return jsonify({'success': True, 'message': 'Propiedad eliminada'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
 
 
 @app.route('/ubicaciones')
@@ -234,6 +273,7 @@ def obtener_ubicaciones():
     ubicaciones = Catalogo.query.with_entities(Catalogo.ubicacion).all()
     result = [ubicacion[0] for ubicacion in ubicaciones]  
     return jsonify(result)
+
 login_manager = LoginManager(app)
 
 @login_manager.user_loader
@@ -303,9 +343,10 @@ def login():
         
         if user:
             login_user(user)
+            session['username'] = username
             return redirect(url_for('index'))
         else:
-            flash("Nombre y/o contraseña incorrectos")
+            flash("Nombre y/o contrasena incorrectos")
             return redirect(url_for('login'))
     else:
         return render_template('auth/login.html')
@@ -329,12 +370,11 @@ def protected():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('index'))    
+    return redirect(url_for('index'))  
 
 @app.route('/')
 def index():
     return render_template('index.html')
-#print(generate_password_hash("hola123", method='pbkdf2:sha256'))
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)

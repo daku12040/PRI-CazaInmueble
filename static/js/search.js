@@ -67,6 +67,7 @@ function redirectToSearch() {
         const h2 = document.createElement('h2');
         h2.textContent = 'Sin resultados, intente un criterio más simple';
         h2.className = 'text-center';
+        footer.className = 'footer-advanced-aside mt-5';
 
         col.appendChild(h2);
         thumbnails.appendChild(col);
@@ -97,7 +98,7 @@ function redirectToSearch() {
         const title = document.createElement('h5');
         title.className = 'card-title';
         title.textContent = pub.nombre;
-        title.addEventListener('click', function() {
+        card.addEventListener('click', function() {
             window.location.href = `/propiedad/${pub.id}`;
         });
 
@@ -123,6 +124,6 @@ function redirectToSearch() {
         col.appendChild(card); 
         thumbnails.appendChild(col); 
     });
-}}
+}}  
 	crearMiniaturas(publicaciones);
 	});

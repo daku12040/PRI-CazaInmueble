@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchBar = document.getElementById('searchBar');
     const searchButton = document.getElementById('searchButton');
     const getPublisher = document.getElementById('publisher');
+    const formData = new FormData();
 
     const opendesc = document.getElementById('opendesc');
     const descripcionModal = document.getElementById('descripcionModal');
@@ -157,7 +158,14 @@ precioInput.addEventListener('mouseout', function() {
 }
     function chargeImg(){
         const files = imageUpload.files;
-        
+
+    
+    
+     for (let i = 0; i < files.length; i++) {
+        formData.append('imagesurl', files[i]);
+        formData.append('images',files[i].name);
+        console.log('images', files[i].name);
+    }
             const col = document.createElement('div');
             col.classList.add('col-sm-6'); 
         Array.from(files).forEach(file => {
@@ -206,13 +214,7 @@ precioInput.addEventListener('mouseout', function() {
     
    document.getElementById("publicacionForm").addEventListener("submit", function(event) {
     event.preventDefault(); 
-    const formData = new FormData();
-    const files = imageUpload.files;
     
-    
-    for (let i = 0; i < files.length; i++) {
-        formData.append('images', files[i]);
-    }
     
     // Obtener valores del formulario
     const nombre = document.getElementById("nombre").value;
@@ -221,8 +223,7 @@ precioInput.addEventListener('mouseout', function() {
     const publisher = document.getElementById("publisher").value;
     const ubicacion = locationQuery;
     const descripcion = document.getElementById("descripcion").value; 
-    const image = document.getElementById("imageUpload").files[0];
-    console.log(image.name);
+    const image = document.getElementById("imageUpload").files[0].name ;
     
     formData.append('nombre', nombre);
     formData.append('precio', precio);
@@ -230,6 +231,9 @@ precioInput.addEventListener('mouseout', function() {
     formData.append('publisher', publisher);
     formData.append('ubicacion', ubicacion);
     formData.append('descripcion', descripcion);
+
+    
+
     
     fetch('/insertar', {
     

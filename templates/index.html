@@ -81,17 +81,17 @@
 
     
 <header>
-    <!-- Fixed navbar -->
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-custom">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#principal">
-             <img class="box-promo" src="{{ url_for('static', filename='images/icon2.png') }}" alt="Icono">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="navbar" id="navbarCollapse">
-                <ul class="navbar-nav me-auto mb-2 mb-md-0">
+  <!-- Fixed navbar -->
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-custom">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#principal">
+         <img class="box-promo" src="{{ url_for('static', filename='images/icon2.png') }}" onclick="window.location.href='/'" alt="Icono">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar" id="navbarCollapse">
+            <ul class="navbar-nav me-auto mb-2 mb-md-0">
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="#">Inicio</a>
                     </li>
@@ -102,25 +102,30 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('publicar') }}">Publicar</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="solicitudes/{{current_user.username}}">Solicitudes</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="register">Publicar</a>
+                    </li>
                     {% endif %}
                     {% if not current_user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('login') }}">Login</a>
                     </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
-                    </li>
-                    {% endif %}
-                    <form action="/register">
                     <li class="nav-item" >
                         <button  id="regbutton" class="button" onclick="window.location.href='/register'">Registro</button>
                     </li>
-                </form>
-                </ul>
-            </div>
+                    {% else %}
+                    <li class="nav-item">
+                        <button class="button" onclick="window.location.href='/logout'">Cerrar Sesion</button>
+                    </li>
+                    {% endif %}
+            </ul>
         </div>
-    </nav>
+    </div>
+</nav>
 
 </header>
 <!--Imagen fondo-->
@@ -131,8 +136,8 @@
  alt="Imagen principal de la página" width="100%" tabindex="1">
 
     <div class="overlay position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center">
-        <div class=" searchbar wow-outer " > 
-          <label for="filtronav" style="display: none;">Buscador por filtros</label>
+        <div class=" searchbar input-group" > 
+          <label for="filtronav" class="visually-hidden" >Buscador por filtros</label>
             <input type="text" class="form-control" name="Buscador" id="filtronav" placeholder="Buscar..." aria-describedby="boton-desplegable"title="Busqueda">
             
             
@@ -211,13 +216,7 @@
 </div>
 
 </main>
-
-{% if current_user.is_authenticated %}
-<h1>
-    Bienvenido, Nombre: " {{current_user.fullname}}", Correo:"{{current_user.correo}}".
-</h1>
-{% endif %}
-
+    
 <!-- Begin page content -->
 <container id="inicio">
 <div class="flex-shrink-0">
@@ -308,6 +307,6 @@
         </div>
     </footer>
 
-    
+
     </body>
 </html>

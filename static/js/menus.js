@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
             title.className = 'card-title';
             title.id = `titlefor${pub.id}`;
             title.textContent = pub.nombre;
-            title.addEventListener('click', function() {
+            card.addEventListener('click', function() {
                 window.location.href = `/propiedad/${pub.id}`;});
 
             //Agregar url/propiedad/pub.id

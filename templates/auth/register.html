@@ -1,17 +1,33 @@
-{% extends './base.html' %}
+<html lang="en">
 
-{% block title %}Register{% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="shortcut icon" href="/static/images/flask.svg">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <!-- Custom CSS -->
+    
+</head>
 
 {% block customCSS %}
 <!-- Estilos personalizados para el formulario de registro -->
-<link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
-{% endblock %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
 
-{% block body %}
-<form class="form-signup" action="/register" method="POST">
-    <img class="mb-4" src="{{ url_for('static', filename='images/logo.png') }}" alt="" width="100" height="60">
-    <h1 class="h3 mb-3 fw-normal">Register</h1>
-            <a href="javascript:history.back()" class="btn-primary btn-lg"><</a>
+{% endblock %}
+        
+     
+<body class="text-center">
+    <form class="form-signin" action="/register" method="POST">
+            <img class="mb-6" src="{{ url_for('static', filename='images/icon2.png') }}" alt="" width="100" height="60">
+
+        <div class="row">
+            <button><a class="button" href="javascript:history.back()" class="btn-primary btn-lg">Volver<</a></button>
+    </div>
+    <h1 class="h3 mb-3 fw-normal">Registro</h1>
 
 
     <!-- Campo de username -->
@@ -44,6 +60,8 @@
     </div>
 
     <button id="registrar" class="w-100 btn btn-lg btn-primary mt-3" type="submit">Registrarse</button>
+    <p> Cuenta Existente:<a href="/login">Ingresar aqui</a></p>
+
 </form>
  <!--<script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -69,7 +87,7 @@
     });
 </script> -->
 
-{% endblock %}
+
 <!--1
 from models.entities.User import User
 
@@ -123,19 +141,6 @@ class ModelUser:
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
-class User(UserMixin):
-    
-    def __init__(self, id, username, password, fullname=""):
-        self.id = id
-        self.username = username
-        self.password = generate_password_hash(password, method='pbkdf2:sha256')
-        self.fullname = fullname
 
-    def check_password(self, password):
-        return check_password_hash(self.password, password)
-
-
-#print(generate_password_hash("suscribete"))
-#python .\src\models\entities\User.py
 
    -->

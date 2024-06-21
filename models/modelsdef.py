@@ -56,12 +56,21 @@ class Catalogo(db.Model):
         def image_urls(self, urls):
             self.image_url = ','.join(urls)
 
+class Solicitudes(db.Model):
+        __tablename__ = 'solicitudes'
+        id = db.Column(db.Integer, primary_key=True)
+        nombre_agente = db.Column(db.String(50), nullable=False)
+        propiedad = db.Column(db.String(100), nullable=False)
+        nombre_cliente = db.Column(db.String(50), nullable=False)
+        tel_cliente = db.Column(db.String(20), nullable=False)
+
+     
 class User(db.Model, UserMixin):
     __tablename__ = 'user'
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
-    password = db.Column(db.String(100), nullable=False)  
+    password = db.Column(db.String(200), nullable=False)  
     fullname = db.Column(db.String(100), nullable=False)
     correo = db.Column(db.String(100), nullable=False)  
 
